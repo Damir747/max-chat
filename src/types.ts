@@ -37,7 +37,9 @@ export type InstanceState =
   | 'blocked'
   | 'sleepMode'
   | 'starting'
-  | 'yellowCard';
+  | 'yellowCard'
+  | 'suspended'
+  | 'pendingPassword';
 
 export interface StateInstanceResponse {
   stateInstance: InstanceState;

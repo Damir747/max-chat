@@ -15,6 +15,9 @@ const STATE_MESSAGE: Partial<Record<InstanceState, string>> = {
   starting: 'Инстанс запускается. Подождите минуту и повторите вход.',
   sleepMode: 'Телефон не в сети. Проверьте подключение телефона к интернету и повторите вход.',
   yellowCard: 'Инстанс временно ограничен. Проверьте состояние в личном кабинете GREEN-API.',
+  suspended: 'На аккаунте временные ограничения. Проверьте состояние в личном кабинете GREEN-API.',
+  pendingPassword:
+    'Для завершения авторизации требуется ввести пароль двухфакторной аутентификации. Введите его в личном кабинете GREEN-API (или отправьте методом SendAuthorizationPassword), затем повторите вход.',
 };
 
 export default function LoginScreen({ onLogin }: Props) {
