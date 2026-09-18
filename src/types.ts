@@ -52,12 +52,6 @@ export interface InstanceSettings {
   [key: string]: unknown;
 }
 
-export interface QrResponse {
-  /** qrCode — изображение в base64, alreadyLogged — инстанс уже авторизован */
-  type: 'qrCode' | 'alreadyLogged' | 'error';
-  message: string;
-}
-
 export interface SendMessageResponse {
   idMessage: string;
 }

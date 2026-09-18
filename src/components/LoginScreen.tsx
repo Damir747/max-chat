@@ -2,17 +2,20 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { DEFAULT_API_URL, getStateInstance } from '../api/greenApi';
 import { ensureNotifications } from '../api/instance';
-import QrScreen from './QrScreen';
 import type { Credentials, InstanceState } from '../types';
 
 interface Props {
   onLogin: (credentials: Credentials) => void;
 }
 
-interface PendingAuth {
-  credentials: Credentials;
-  state: InstanceState;
-}
+const STATE_MESSAGE: Partial<Record<InstanceState, string>> = {
+  notAuthorized:
+    'Инстанс не авторизован. Откройте личный кабинет GREEN-API и подключите телефон к инстансу (кнопка «Авторизовать»/QR-код), затем повторите вход.',
+  blocked: 'Инстанс заблокирован. Обратитесь в поддержку GREEN-API.',
+  starting: 'Инстанс запускается. Подождите минуту и повторите вход.',
+  sleepMode: 'Телефон не в сети. Проверьте подключение телефона к интернету и повторите вход.',
+  yellowCard: 'Инстанс временно ограничен. Проверьте состояние в личном кабинете GREEN-API.',
+};
 
 export default function LoginScreen({ onLogin }: Props) {
   const [idInstance, setIdInstance] = useState('');
@@ -22,7 +25,6 @@ export default function LoginScreen({ onLogin }: Props) {
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState<PendingAuth | null>(null);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -46,14 +48,11 @@ export default function LoginScreen({ onLogin }: Props) {
       setStep('Проверяем инстанс');
       const { stateInstance } = await getStateInstance(credentials);
 
-      if (stateInstance === 'blocked') {
-        setError('Инстанс заблокирован. Обратитесь в поддержку GREEN-API.');
-        return;
-      }
-
       if (stateInstance !== 'authorized') {
-        // Инстанс не подключён к MAX — показываем QR-код.
-        setPending({ credentials, state: stateInstance });
+        setError(
+          STATE_MESSAGE[stateInstance] ||
+            `Инстанс в состоянии «${stateInstance}». Авторизуйте его в личном кабинете GREEN-API и повторите вход.`,
+        );
         return;
       }
 
@@ -66,23 +65,6 @@ export default function LoginScreen({ onLogin }: Props) {
       setBusy(false);
       setStep('');
     }
-  }
-
-  async function handleAuthorized() {
-    if (!pending) return;
-    await ensureNotifications(pending.credentials).catch(() => undefined);
-    onLogin(pending.credentials);
-  }
-
-  if (pending) {
-    return (
-      <QrScreen
-        credentials={pending.credentials}
-        initialState={pending.state}
-        onAuthorized={handleAuthorized}
-        onCancel={() => setPending(null)}
-      />
-    );
   }
 
   return (
@@ -148,8 +130,8 @@ export default function LoginScreen({ onLogin }: Props) {
 
         <p className="login__hint">
           При входе приложение включает уведомления через HTTP API: очищает webhookUrl и
-          подписывается на входящие и исходящие сообщения. Если инстанс ещё не подключён к MAX,
-          откроется экран с QR-кодом.
+          подписывается на входящие и исходящие сообщения. Инстанс должен быть уже авторизован
+          (телефон подключён) в личном кабинете GREEN-API.
         </p>
       </form>
     </div>

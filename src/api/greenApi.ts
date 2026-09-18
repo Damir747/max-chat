@@ -3,7 +3,6 @@ import type {
   Credentials,
   InstanceSettings,
   Notification,
-  QrResponse,
   SendMessageResponse,
   StateInstanceResponse,
 } from '../types';
@@ -147,11 +146,6 @@ export function setSettings(
     body: settings,
     signal,
   });
-}
-
-/** QR-код для авторизации инстанса. Обновляется примерно раз в 20 секунд. */
-export function getQr(credentials: Credentials, signal?: AbortSignal) {
-  return request<QrResponse>(credentials, 'qr', { signal });
 }
 
 /** Выход из аккаунта мессенджера на стороне инстанса. */

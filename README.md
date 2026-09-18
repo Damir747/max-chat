@@ -37,8 +37,8 @@ npm test
 
 ## Как пользоваться
 
-1. **Вход.** Введите `idInstance` и `apiTokenInstance` из [личного кабинета GREEN-API](https://console.green-api.com). Приложение проверит методом `GetStateInstance`, что инстанс авторизован, и включит уведомления по HTTP API (`SetSettings`: пустой `webhookUrl`, `incomingWebhook: yes`, `outgoingWebhook: yes`).
-2. **QR-код.** Если инстанс ещё не подключён к MAX, откроется экран с QR-кодом: отсканируйте его в приложении MAX («Настройки» → «Устройства»). Код обновляется автоматически, а состояние инстанса опрашивается раз в 4 секунды — после авторизации чат открывается сам.
+1. **Привяжите телефон к инстансу** в [личном кабинете GREEN-API](https://console.green-api.com) — это делается один раз, до открытия чата (кнопка «Авторизовать инстанс» / QR-код в кабинете).
+2. **Вход в чат.** Введите `idInstance` и `apiTokenInstance` этого инстанса. Приложение проверит методом `GetStateInstance`, что инстанс авторизован, и включит уведомления по HTTP API (`SetSettings`: пустой `webhookUrl`, `incomingWebhook: yes`, `outgoingWebhook: yes`). Если инстанс не авторизован, форма покажет понятную ошибку с указанием, что нужно сделать в личном кабинете.
 3. **Новый чат.** Введите номер получателя — `79991234567`, `+7 999 123-45-67` или `8 999 123-45-67`. Номер приводится к `79991234567@c.us`. Можно вставить и готовый идентификатор чата, включая групповой (`-10000000000000`).
 4. **Переписка.** Напишите сообщение и нажмите Enter (Shift+Enter — перенос строки). Ответ получателя появится в чате автоматически, обновлять страницу не нужно.
 
@@ -49,7 +49,6 @@ npm test
 | Назначение | Метод |
 | --- | --- |
 | Проверка авторизации инстанса | `GetStateInstance` |
-| QR-код для подключения телефона | `QR` |
 | Настройка приёма уведомлений | `GetSettings`, `SetSettings` |
 | Отправка сообщения | [`SendMessage`](https://green-api.com/v3/docs/api/sending/SendMessage/) |
 | Приём уведомлений | [`ReceiveNotification`](https://green-api.com/v3/docs/api/receiving/technology-http-api/ReceiveNotification/) |
@@ -77,8 +76,7 @@ src/
   api/greenApi.ts             запросы к GREEN-API и разбор ошибок
   api/instance.ts             включение уведомлений по HTTP API
   hooks/useNotifications.ts   цикл ReceiveNotification → DeleteNotification
-  components/LoginScreen.tsx  вход по учётным данным
-  components/QrScreen.tsx     подключение телефона по QR-коду
+  components/LoginScreen.tsx  вход по учётным данным (инстанс должен быть уже авторизован)
   components/Sidebar.tsx      список чатов и создание нового
   components/ChatWindow.tsx   лента сообщений и поле ввода
   utils/chat.ts               номера, chatId, даты, разбор уведомлений
